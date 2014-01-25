@@ -1,0 +1,21 @@
+version: 1.2
+
+ArenaTactics:
+    flaghome: "&2home"
+    flagfloor: "&5on floor"
+    flagperson: "&4"  ## will display the name of the person after what is provided here
+    teamscore: "&6{team}&e:&2 {captures}&6/{maxcaptures} {flagholder}"
+    teamscore_separator: ", "
+    score: "{prefix} &eScore : {teamscores}"
+    returned_flag: "{prefix} &2Your flag has been returned home"
+    player_returned_flag: "{prefix} &6{player}&2 has returned your flag home"
+    taken_your_flag: "{prefix} &6{player}&c has taken your flag!"
+    taken_enemy_flag: "{prefix} &6{player}&a has taken the enemy flag!"
+    teamscored: |
+        {prefix} &8<=== &6{team} &ehas captured the flag &8===>
+        {score}
+    time_expired_win: "{prefix} Congratulations to {teams}"
+    time_expired_draw: "{prefix} The CTF was drawn between {teams}"
+    time_remaining: |
+        &4<---- &f{timeleft} remaining &4---->
+        {score}

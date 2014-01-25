@@ -1,0 +1,8 @@
+name: ArenaTactics
+
+version: 1.0.0.1
+author: ruba
+
+description: Kill limit with a CTF bonus!
+depend: [BattleArena]
+main: com.gmail.russell.j.baker.arena.tacs.Tacs

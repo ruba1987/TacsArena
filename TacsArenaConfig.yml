@@ -1,0 +1,47 @@
+configVersion: 2.0
+
+## This should be places in the plugin directory
+## for more help configuring see the wiki
+## https://github.com/alkarinv/BattleArena/wiki
+## Change this file to customize your event
+
+TacsArena:
+    queue: true
+    prefix: "&8[Tacs]&e"
+    scoreToWin: 5
+    command: tacs
+    database: tacs # or delete if you dont want wins/losses/top, needs BattleTracker
+    matchTime: 2147483647 # in seconds
+    joinType: Queue ## Queue or JoinPhase
+    victoryCondition: ScoreLimit
+    nLives: infinite
+    nTeams: 1+
+    teamSize: 1
+    defaults: ## Global options for the entire match
+        options: [woolTeams, alwaysOpen]
+    preReqs: ## requirements to join
+        options: []
+    onEnter:
+        options: [storeAll]
+    onLeave:
+        options: [restoreAll]
+    onJoin:
+        options: [teleportIn, pvpOn, hunger=20]
+    onOpen:
+        options: [pvpOn]
+    onPrestart:
+        options: [pvpOn]
+    onStart:
+        options: [pvpOn, teleportIn, hunger=20]
+    onComplete: ## Called when a player leaves, or no longer is supposed to spawn in arena
+        options: [teleportOut]
+    onFinish: ### effects after game is finished
+        options: []
+    onSpawn:
+        options: [health=20, hunger=20, respawnWithClass]
+        items:
+          - compass: 1
+    onDeath:
+        options: [teleportIn]
+    winner:
+        options: [health=20, hunger=20]
