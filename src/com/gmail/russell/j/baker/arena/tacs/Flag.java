@@ -8,7 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
  
-
+ 
 public class Flag {
 	static int count = 0;
 	final int id = count++; /// our id
