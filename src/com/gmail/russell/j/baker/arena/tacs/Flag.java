@@ -7,7 +7,7 @@ import mc.alk.arena.util.SerializerUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
-
+ 
 
 public class Flag {
 	static int count = 0;
