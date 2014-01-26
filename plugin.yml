@@ -5,4 +5,4 @@ author: ruba
 
 description: Kill limit with a CTF bonus!
 depend: [BattleArena]
-main: com.gmail.russell.j.baker.arena.tacs.Tacs
+main: com.gmail.russelljbaker.arena.tacs.Tacs

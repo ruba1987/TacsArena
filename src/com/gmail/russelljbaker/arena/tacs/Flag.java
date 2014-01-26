@@ -21,7 +21,7 @@ public class Flag {
 
 	final ItemStack is; /// what type of item is our flag
 
-	final Location homeLocation; /// our spawn location
+	Location homeLocation; /// our spawn location
 
 	public Flag(ArenaTeam team, ItemStack is, Location homeLocation){
 		this.team = team;
@@ -64,6 +64,10 @@ public class Flag {
 		this.home = home;
 	}
 
+	public void setHomeLocation(Location l){
+		homeLocation = l.clone();
+	}
+	
 	@Override
 	public String toString(){
 		return String.format("[Flag %d: ent=%s, home=%s, team=%d, is=%s, homeloc=%s]",

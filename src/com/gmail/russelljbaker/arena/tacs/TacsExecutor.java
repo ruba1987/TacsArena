@@ -22,6 +22,14 @@ public class TacsExecutor extends CustomCommandExecutor {
 		return true;
 	}
 	
+	@MCCommand(cmds={"moveFlag"}, inGame=true, admin=false)
+	public boolean moveFlag(ArenaPlayer sender, MatchParams mp, Arena arena)
+	{
+		TacsArena tacsArena = (TacsArena)arena;
+		tacsArena.moveFlag(sender, arena, mp);
+		return true;
+	}
+
 	@MCCommand(cmds={"addFlag"}, inGame=true, admin=true)
 	public boolean addFlag(ArenaPlayer sender, Arena arena, Integer index) {
 		if (!(arena instanceof TacsArena)){

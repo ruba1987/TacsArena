@@ -8,23 +8,22 @@ configVersion: 2.0
 TacsArena:
     queue: true
     prefix: "&8[Tacs]&e"
-    scoreToWin: 5
     command: tacs
     database: tacs # or delete if you dont want wins/losses/top, needs BattleTracker
     matchTime: 2147483647 # in seconds
     joinType: Queue ## Queue or JoinPhase
     victoryCondition: ScoreLimit
     nLives: infinite
-    nTeams: 1+
+    nTeams: 0+
     teamSize: 1
     defaults: ## Global options for the entire match
-        options: [woolTeams, alwaysOpen]
+        options: [alwaysOpen]
     preReqs: ## requirements to join
         options: []
     onEnter:
-        options: [storeAll]
+        options: []
     onLeave:
-        options: [restoreAll]
+        options: []
     onJoin:
         options: [teleportIn, pvpOn, hunger=20]
     onOpen:

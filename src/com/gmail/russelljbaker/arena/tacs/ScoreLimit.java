@@ -45,7 +45,7 @@ public class ScoreLimit extends VictoryCondition implements ScoreTracker{
 		return 0;
 	}
 	
-	@ArenaEventHandler(priority=EventPriority.LOW)
+	@ArenaEventHandler
 	public void playerKillEvent(ArenaPlayerKillEvent event) {
 		addScore(event.getTeam(), event.getPlayer());
 	}

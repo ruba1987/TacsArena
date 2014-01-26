@@ -47,7 +47,6 @@ public class TacsArena extends Arena {
 	
 	public static final boolean DEBUG = false;
 	private HashSet<String> activePlayers = new HashSet<String>();
-	private Map<String, Flag> cachedFlags = new HashMap<String, Flag>();
 	private static final long FLAG_RESPAWN_TIMER = 20*15L;
 	private static final long TIME_BETWEN_CAPTURES = 2000;
 	TeamController teamc = BattleArena.getTeamController();
@@ -74,20 +73,19 @@ public class TacsArena extends Arena {
 	final Map<ArenaTeam, Long> lastCapture = new ConcurrentHashMap<ArenaTeam, Long>();
 
 	final Set<Material> flagMaterials = new HashSet<Material>();
-	EventController ec;
 	Random rand = new Random();
 	MatchMessageHandler mmh;
 
 	@Override
 	public void onOpen(){
+		Tacs.getSelf().getLogger().info("Open");
 		mmh = getMatch().getMessageHandler();
 		resetVars();
 		getMatch().addVictoryCondition(scores);
-        this.ec = BattleArena.getEventController();		
-		
 	}
 
 	private void resetVars(){
+		Tacs.getSelf().getLogger().info("Reset");
 		VictoryCondition vc = getMatch().getVictoryCondition(ScoreLimit.class);
 		scores = (ScoreLimit) (vc != null ? vc : new ScoreLimit(getMatch()));
 		scores.setScore(capturesToWin);
@@ -102,6 +100,7 @@ public class TacsArena extends Arena {
 
 	@Override
 	public void onStart(){
+		Tacs.getSelf().getLogger().info("start");
 		List<ArenaTeam> teams = getTeams();
 //		if (flagSpawns.size() < teams.size()){
 //			//err("Cancelling CTF as there " + teams.size()+" teams but only " + flagSpawns.size() +" flags");
@@ -169,7 +168,7 @@ public class TacsArena extends Arena {
 			public void run() {updateCompassLocations();}
 		}, 0L, 5*20L);
 	}
-
+	
 	private void updateCompassLocations() {
 		List<ArenaTeam> teams = getTeams();
 		Flag f;
@@ -193,14 +192,13 @@ public class TacsArena extends Arena {
 		return item;
 	}
 	
-	
 	@Override
 	public void onFinish(){
 		cancelTimers();
 		removeFlags();
 		resetVars();
 	}
-
+	
 	@ArenaEventHandler
 	public void onPlayerDropItem(PlayerDropItemEvent event){
 		if (event.isCancelled())
@@ -214,24 +212,32 @@ public class TacsArena extends Arena {
 			playerDroppedFlag(flag, item);}
 	}
 	
-	Map<String, ArenaTeam> playerMappings = new ConcurrentHashMap<String, ArenaTeam>();
+	//Map<String, ArenaTeam> playerMappings = new ConcurrentHashMap<String, ArenaTeam>();
 	
 	//@Override
+	int counter = 0;
 	protected void addPlayer(ArenaPlayer player, Arena arena, MatchParams mp) 
 	{
-			//TODO: add code to support respawning the players flag when they come back into the game
-			if(playerMappings.containsKey(player.getDisplayName()))
+			if(getTeam(player) != null)
 			{
-				arena.getMatch().addedToTeam(playerMappings.get(player.getDisplayName()), player);
-				Tacs.getSelf().getLogger().info("Team: " + cachedFlags.get(player.getDisplayName()));
-				addFlag(cachedFlags.get(playerMappings.get(player.getDisplayName()).getDisplayName()).id, cachedFlags.get(playerMappings.get(player.getDisplayName()).getDisplayName()).getHomeLocation());
-				spawnFlag(cachedFlags.get(playerMappings.get(player.getDisplayName()).getDisplayName()));
-				cachedFlags.remove(playerMappings.get(player.getDisplayName()).getDisplayName());
+				arena.getMatch().addedToTeam(getTeam(player), player);
+				addFlag(teamFlags.get(getTeam(player)).id, teamFlags.get(getTeam(player)).getHomeLocation());
+				spawnFlag(teamFlags.get(getTeam(player)));
 			}
 			else
 			{
-				//addFlag(flags.size()+1, new Location(player.getLocation().getWorld(), 201.05394, 123.000, 318.06244));
 				BattleArena.getBAExecutor().join(player, mp, new String[1]);
+				
+				//Initial startup for each player. similar to onStart
+				ArenaTeam t = getTeam(player);
+				ItemStack is = TeamUtil.getTeamHead(counter);
+				Flag f = new Flag(t,is,flagSpawns.get(counter).clone());
+				teamFlags.put(t, f);
+				flagMaterials.add(is.getType());
+				spawnFlag(f);
+				counter++;
+				//playerMappings.put(player.getDisplayName(), team);
+				
 			}
 			
 			activePlayers.add(player.getDisplayName());
@@ -242,12 +248,9 @@ public class TacsArena extends Arena {
 	@Override
 	protected void onLeave(ArenaPlayer player, ArenaTeam team){
 		Tacs.getSelf().getLogger().info("Leaving: " + player.getDisplayName());
-		playerMappings.put(player.getDisplayName(), team);
 		activePlayers.remove(player.getDisplayName());
 		super.onLeave(player, team);
 	}
-	
-	
 
 	@ArenaEventHandler
 	public void onPlayerPickupItem(PlayerPickupItemEvent event){
@@ -262,7 +265,8 @@ public class TacsArena extends Arena {
 		params.put("{player}",p.getDisplayName());
 		/// for some reason if I do flags.remove here... event.setCancelled(true) doesnt work!!!! oO
 		/// If anyone can explain this... I would be ecstatic, seriously.
-		if (flag.getTeam().equals(t)){
+		ArenaTeam t1 = flag.getTeam();
+		if (t1.equals(t)){
 			event.setCancelled(true);
 			if (!flag.isHome()){  /// Return the flag back to its home location
 				flags.remove(id);
@@ -321,12 +325,11 @@ public class TacsArena extends Arena {
 		Item item = l.getBlock().getWorld().dropItemNaturally(l,flag.is);
 		playerDroppedFlag(flag, item);
 	}
-
+	
 	@ArenaEventHandler
 	public void onPlayerMove(PlayerMoveEvent event){
 		if (event.isCancelled())
 			return;
-		//TODO stop flags from respawning if a player is dead after the is captured
 		/// Check to see if they moved a block, or if they are holding a flag
 		if (!(event.getFrom().getBlockX() != event.getTo().getBlockX()
 				|| event.getFrom().getBlockY() != event.getTo().getBlockY()
@@ -339,7 +342,9 @@ public class TacsArena extends Arena {
 		Flag f = teamFlags.get(t);
 		//Tacs.getSelf().getLogger().info("Event LOC:" + event.getTo());
 		//Tacs.getSelf().getLogger().info("Curr LOC:" + f.getCurrentLocation());
-		if (f.isHome() && nearLocation(f.getCurrentLocation(),event.getTo())){
+		boolean nearLoc = nearLocation(f.getCurrentLocation(),event.getTo());
+		boolean isHome = f.isHome();
+		if (isHome && nearLoc){
 			Flag capturedFlag = flags.get(event.getPlayer().getEntityId());
 			Long lastc = lastCapture.get(t);
 			/// For some servers multiple teamScored methods were being called, possibly due to a back log of onPlayerMove
@@ -359,9 +364,14 @@ public class TacsArena extends Arena {
 				removeFlag(capturedFlag);
 				if(activePlayers.contains(capturedFlag.getTeam().getDisplayName()))
 					spawnFlag(capturedFlag);
-				else{
-					cachedFlags.put(capturedFlag.getTeam().getDisplayName(), capturedFlag);
-					//removeFlag(capturedFlag);
+				else
+				{
+					cancelFlagRespawnTimer(capturedFlag);
+					Entity ent = capturedFlag.getEntity();
+					if (ent != null && ent instanceof Item){
+						ent.remove();}
+					if (ent != null)
+						flags.remove(ent.getEntityId());
 				}
 			}
 			String score = scores.getScoreString();
@@ -412,6 +422,13 @@ public class TacsArena extends Arena {
 		}
 	}
 
+	public void moveFlag(ArenaPlayer sender, Arena arena, MatchParams mp) {
+		Flag f = teamFlags.get(getTeam(sender));
+		f.setHomeLocation(sender.getLocation().clone());
+		flagSpawns.put(f.id, sender.getLocation().clone());
+		spawnFlag(f);
+	}
+	
 	private void playerPickedUpFlag(Player player, Flag flag) {
 		flags.remove(flag.ent.getEntityId());
 		flag.setEntity(player);
@@ -486,11 +503,12 @@ public class TacsArena extends Arena {
 		flagSpawns.clear();
 	}
 
-
 	@Override
 	public boolean valid(){
 		return super.valid();
 	}
+
+
 
 //	@Override
 //	public List<String> getInvalidReasons(){
