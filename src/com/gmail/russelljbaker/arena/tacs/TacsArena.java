@@ -2,6 +2,7 @@ package com.gmail.russelljbaker.arena.tacs;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -424,6 +425,12 @@ public class TacsArena extends Arena {
 
 	public void moveFlag(ArenaPlayer sender, Arena arena, MatchParams mp) {
 		Flag f = teamFlags.get(getTeam(sender));
+		
+		if(f.getPlaceTime() != null && (f.getPlaceTime().getTime() + 24 * 60 * 60 * 1000L) > new Date().getTime()){
+			sender.sendMessage("You can only move your flag once a day");
+			return;
+		}
+		
 		f.setHomeLocation(sender.getLocation().clone());
 		flagSpawns.put(f.id, sender.getLocation().clone());
 		spawnFlag(f);

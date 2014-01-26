@@ -1,5 +1,8 @@
 package com.gmail.russelljbaker.arena.tacs;
 
+import java.util.Date;
+import java.util.HashMap;
+
 import mc.alk.arena.objects.teams.ArenaTeam;
 import mc.alk.arena.util.InventoryUtil;
 import mc.alk.arena.util.SerializerUtil;
@@ -14,7 +17,7 @@ public class Flag {
 	final int id = count++; /// our id
 
 	Entity ent; /// What is our flag (item or carried by player)
-
+	private Date placeTime = null;
 	boolean home; /// is our flag at home
 
 	final ArenaTeam team; /// which team this flag belongs to
@@ -66,6 +69,12 @@ public class Flag {
 
 	public void setHomeLocation(Location l){
 		homeLocation = l.clone();
+		placeTime = new Date(); //A timer if you would like to place restrictions on how frequently a player can move a flag
+	}
+	
+	public Date getPlaceTime()
+	{
+		return placeTime;
 	}
 	
 	@Override
