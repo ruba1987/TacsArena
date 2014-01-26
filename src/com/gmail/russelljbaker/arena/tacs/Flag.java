@@ -1,4 +1,4 @@
-package com.gmail.russell.j.baker.arena.tacs;
+package com.gmail.russelljbaker.arena.tacs;
 
 import mc.alk.arena.objects.teams.ArenaTeam;
 import mc.alk.arena.util.InventoryUtil;

@@ -1,4 +1,4 @@
-package com.gmail.russell.j.baker.arena.tacs;
+package com.gmail.russelljbaker.arena.tacs;
 
 import java.util.Collection;
 import java.util.HashMap;
