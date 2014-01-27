@@ -1,7 +1,6 @@
 package com.gmail.russelljbaker.arena.tacs;
 
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,7 +9,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -28,7 +26,6 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import mc.alk.arena.BattleArena;
-import mc.alk.arena.controllers.EventController;
 import mc.alk.arena.controllers.PlayerStoreController;
 import mc.alk.arena.controllers.TeamController;
 import mc.alk.arena.controllers.messaging.MatchMessageHandler;

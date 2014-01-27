@@ -1,7 +1,6 @@
 package com.gmail.russelljbaker.arena.tacs;
 
 import java.util.Date;
-import java.util.HashMap;
 
 import mc.alk.arena.objects.teams.ArenaTeam;
 import mc.alk.arena.util.InventoryUtil;
