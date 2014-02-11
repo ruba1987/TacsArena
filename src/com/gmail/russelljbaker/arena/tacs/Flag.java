@@ -1,87 +1,82 @@
 package com.gmail.russelljbaker.arena.tacs;
 
 import java.util.Date;
-
 import mc.alk.arena.objects.teams.ArenaTeam;
 import mc.alk.arena.util.InventoryUtil;
 import mc.alk.arena.util.SerializerUtil;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
-  
- 
-public class Flag {
-	static int count = 0;
-	final int id = count++; /// our id
 
-	Entity ent; /// What is our flag (item or carried by player)
-	private Date placeTime = null;
-	boolean home; /// is our flag at home
+public class Flag
+{
+  static int count = 0;
+  final int id = count++;
+  Entity ent;
+  private Date placeTime = null;
+  boolean home;
+  final ArenaTeam team;
+  final ItemStack is;
+  Location homeLocation;
 
-	final ArenaTeam team; /// which team this flag belongs to
+  public Flag(ArenaTeam team, ItemStack is, Location homeLocation)
+  {
+    this.team = team;
+    this.home = true;
+    this.is = is;
+    this.homeLocation = homeLocation;
+  }
+  public void setEntity(Entity entity) {
+    this.ent = entity; } 
+  public Location getCurrentLocation() { return this.ent.getLocation(); } 
+  public Location getHomeLocation() { return this.homeLocation; }
 
-	final ItemStack is; /// what type of item is our flag
+  public boolean sameFlag(ItemStack is2) {
+    return (this.is.getType() == is2.getType()) && (this.is.getDurability() == is2.getDurability());
+  }
 
-	Location homeLocation; /// our spawn location
+  public boolean equals(Object other)
+  {
+    if (this == other) return true;
+    if (!(other instanceof Flag)) return false;
+    return hashCode() == ((Flag)other).hashCode();
+  }
 
-	public Flag(ArenaTeam team, ItemStack is, Location homeLocation){
-		this.team = team;
-		this.home = true;
-		this.is = is;
-		this.homeLocation = homeLocation;
-	}
+  public int hashCode() {
+    return this.id;
+  }
+  public Entity getEntity() {
+    return this.ent;
+  }
 
-	public void setEntity(Entity entity) {this.ent = entity;}
-	public Location getCurrentLocation() {return ent.getLocation();}
-	public Location getHomeLocation() {return homeLocation;}
+  public ArenaTeam getTeam() {
+    return this.team;
+  }
 
-	public boolean sameFlag(ItemStack is2) {
-		return is.getType() == is2.getType() && is.getDurability() == is2.getDurability();
-	}
+  public boolean isHome() {
+    return this.home;
+  }
 
-	@Override
-	public boolean equals(Object other) {
-		if (this == other) return true;
-		if (!(other instanceof Flag)) return false;
-		return this.hashCode() == ((Flag) other).hashCode();
-	}
+  public void setHome(boolean home) {
+    this.home = home;
+  }
 
-	@Override
-	public int hashCode() { return id;}
+  public void setHomeLocation(Location l) {
+    this.homeLocation = l.clone();
+    this.placeTime = new Date();
+  }
 
-	public Entity getEntity() {
-		return ent;
-	}
+  public Date getPlaceTime()
+  {
+    return this.placeTime;
+  }
 
-	public ArenaTeam getTeam() {
-		return team;
-	}
-
-	public boolean isHome() {
-		return home;
-	}
-
-	public void setHome(boolean home) {
-		this.home = home;
-	}
-
-	public void setHomeLocation(Location l){
-		homeLocation = l.clone();
-		placeTime = new Date(); //A timer if you would like to place restrictions on how frequently a player can move a flag
-	}
-	
-	public Date getPlaceTime()
-	{
-		return placeTime;
-	}
-	
-	@Override
-	public String toString(){
-		return String.format("[Flag %d: ent=%s, home=%s, team=%d, is=%s, homeloc=%s]",
-				id,ent == null ? "null" :ent.getType(),home,
-				team == null ? "null" : team.getId(),
-				is == null ? "null" : InventoryUtil.getItemString(is),
-				homeLocation==null? "null" : SerializerUtil.getLocString(homeLocation));
-	}
+  public String toString()
+  {
+    return String.format("[Flag %d: ent=%s, home=%s, team=%d, is=%s, homeloc=%s]", new Object[] { 
+      Integer.valueOf(this.id), this.ent == null ? "null" : this.ent.getType(), Boolean.valueOf(this.home), 
+      this.team == null ? "null" : Integer.valueOf(this.team.getId()), 
+      this.is == null ? "null" : InventoryUtil.getItemString(this.is), 
+      this.homeLocation == null ? "null" : SerializerUtil.getLocString(this.homeLocation) });
+  }
 }
