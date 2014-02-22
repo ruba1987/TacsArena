@@ -61,10 +61,10 @@ public class ScoreLimit extends VictoryCondition
   {
     return 0;
   }
-  @ArenaEventHandler
-  public void playerKillEvent(ArenaPlayerKillEvent event) {
-    addScore(event.getTeam(), event.getPlayer());
-  }
+//  @ArenaEventHandler
+//  public void playerKillEvent(ArenaPlayerKillEvent event) {
+//    addScore(event.getTeam(), event.getPlayer());
+//  }
 
   public synchronized boolean addScore(ArenaTeam t, ArenaPlayer p, Integer pts) {
     if ((this.score == null) || (t == null) || (p == null) || (pts == null)) {
