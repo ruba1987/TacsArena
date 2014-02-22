@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import mc.alk.arena.BattleArena;
+import mc.alk.arena.Defaults;
 import mc.alk.arena.competition.match.Match;
 import mc.alk.arena.controllers.BattleArenaController;
 import mc.alk.arena.controllers.PlayerStoreController;
@@ -38,7 +39,9 @@ import mc.alk.arena.objects.teams.ArenaTeam;
 import mc.alk.arena.objects.victoryconditions.VictoryCondition;
 import mc.alk.arena.serializers.ArenaSerializer;
 import mc.alk.arena.serializers.Persist;
+import mc.alk.arena.util.MessageUtil;
 import mc.alk.arena.util.TeamUtil;
+import mc.alk.scoreboardapi.api.STeam;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -226,7 +229,7 @@ public class TacsArena extends Arena
 		// readTeamMapping();
 		String[] s = new String[1];
 		s[0] = player.getName();
-
+		String chatColor = MessageUtil.colorChat(colorMapping.get(player.getName()) + "");
 		if (getTeam(player) != null)
 		{
 			BattleArena.getBAExecutor().join(player, mp, s);
@@ -246,10 +249,13 @@ public class TacsArena extends Arena
 			{
 				is = TeamUtil.getTeamHead(playerFlagMapping.get(player.getName()));
 				f = new Flag(t, is, flagSpawns.get(playerFlagMapping.get(player.getName())));
+				
+				STeam st = getMatch().getScoreboard().getTeam(t.getIDString());
+				st.setPrefix(chatColor);
 				t.setTeamChatColor(colorMapping.get(player.getName()));
-				t.setScoreboardDisplayName("&" + colorMapping.get(player.getName()).getChar() + player.getName());
+				t.setScoreboardDisplayName(chatColor + player.getName());
 				Player tmpPlayer = player.getPlayer();
-				tmpPlayer.setDisplayName("&" + colorMapping.get(player.getName()).getChar() + player.getName());
+				tmpPlayer.setDisplayName(chatColor + player.getName());
 				player.setPlayer(tmpPlayer);
 			}
 			else
@@ -261,9 +267,7 @@ public class TacsArena extends Arena
 				whireColorMapping();
 				writePlayerMapping();
 			}
-			t.setDisplayName("&" + colorMapping.get(player.getName()).getChar() + player.getName());
-			// t.setName("&" + colorMapping.get(player.getName()).getChar() +
-			// player.getName());
+			t.setDisplayName(chatColor + player.getName());
 			this.teamFlags.put(t, f);
 			this.flagMaterials.add(is.getType());
 			spawnFlag(f);

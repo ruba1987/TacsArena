@@ -42,6 +42,7 @@ public class ScoreLimit extends VictoryCondition
     super(match);
     this.score = new ArenaObjective("playerKills", "Player Kills", 60);
     this.score.setDisplayName("&4First to " + maxPoints);
+    
     readScores();
   }
 
